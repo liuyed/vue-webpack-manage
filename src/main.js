@@ -1,9 +1,14 @@
 import Vue from 'vue';
 import Layout from './components/layout';
 import VueRouter from 'vue-router';
+//import iView from "iview";
 import App from './App';
 // import VueResource from 'vue-resource'
 import IndexPage from './pages/index';
+
+import { Button, Table } from "iview";
+Vue.component("Button", Button);
+Vue.component("Table", Table);
 
 // import DetailPage from './pages/detail'
 // import OrderListPage from './pages/orderList'
@@ -13,8 +18,9 @@ import IndexPage from './pages/index';
 // import DetailPubPage from './pages/detail/publish'
 
 import './common/style/base.scss';
-Vue.use(VueRouter)
-    // Vue.use(VueResource)
+Vue.use(VueRouter);
+//Vue.use(iView);
+// Vue.use(VueResource)
 let router = new VueRouter({
         //mode: 'history',
         routes: [{

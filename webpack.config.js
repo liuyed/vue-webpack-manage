@@ -5,12 +5,20 @@ let path = require("path"),
     ExtractTextPlugin = require("extract-text-webpack-plugin"),
     CleanWebpackPlugin = require('clean-webpack-plugin'),
     postCssConfig = require('./postcss.config.js'),
+    //HtmlWebpackIncludeAssetsPlugin = require('html-webpack-include-assets-plugin'),
     ROOT = process.cwd(); //根目录
+
+//const manifest = require("./vendor-manifest.json");
+
+//const bundleConfig = require("./bundle-config.json");
 
 
 
 module.exports = {
-    entry: './src/main.js',
+    entry: {
+        main: './src/main.js',
+        vendor: ['vue', "vue-router"]
+    },
     output: {
         path: path.resolve(__dirname, 'dist'),
         publicPath: '/',
@@ -35,7 +43,33 @@ module.exports = {
     module: {
         rules: [{
             test: /\.vue$/,
-            loader: 'vue-loader'
+            use: {
+                loader: 'vue-loader',
+                options: {
+                    loaders: {
+                        css: ExtractTextPlugin.extract({
+                            fallback: "style-loader",
+                            use: [{
+                                    loader: "css-loader",
+                                    options: {
+                                        importLoaders: 2,
+                                        minimize: true
+                                    }
+                                },
+                                {
+                                    loader: "postcss-loader",
+                                    options: {
+                                        config: {
+                                            path: "./postcss.config.js"
+                                        }
+                                    }
+                                },
+                                "sass-loader"
+                            ]
+                        })
+                    }
+                }
+            }
         }, {
             test: /\.js$/,
             exclude: /node_modules/,
@@ -85,18 +119,51 @@ module.exports = {
         }]
     },
     plugins: [
+        new CleanWebpackPlugin(['dist/'], {
+            "root": __dirname, // An absolute path for the root. 
+            "verbose": true, // Write logs to console. 
+            "watch": false // If true, remove files on recompile. (Default: false) 
+
+        }),
         new webpack.DefinePlugin({
             'isDev': true
         }),
         new HtmlWebpackPlugin({
             filename: 'index.html',
             template: 'index.html',
-            inject: true
+            inject: true,
+            //bundleName: bundleConfig.vendor.js
+            //chunks: ['vendor', 'main']
         }),
+        // new HtmlWebpackIncludeAssetsPlugin({
+        //     assets: bundleConfig.vendor.js,
+        //     append: false,
+        //     jsExtensions: ['.js']
+        // }),
         new ExtractTextPlugin({
             filename: 'css/app.css?v=[contenthash:8]',
-            //allChunks: true
+            allChunks: true
         }),
+        //new webpack.optimize.UglifyJsPlugin({
+        //compress: {
+        //    warnings: false
+        //  },
+        // sourceMap: true
+        //}),
+        new webpack.ProvidePlugin({
+            Vue: 'vue',
+            vue: 'vue'
+
+        }),
+        // new webpack.DllReferencePlugin({
+        //     context: __dirname,
+        //     manifest: require("./vendor-manifest.json")
+        // }),
+        new webpack.optimize.CommonsChunkPlugin({
+            name: 'vendor',
+            chunks: ['vendor'],
+            minChunks: Infinity
+        })
     ]
 
 }

@@ -1,11 +1,18 @@
 <template>
   <div class="index-wrap">
     index
+    <img src="../static/wenzhen.png" alt="">
+       <Button type="primary">Primary</Button>
   </div>
 </template>
 
 <script>
-export default {}
+
+
+
+export default {
+
+}
 // import slideShow from '../components/slideShow'
 // export default {
 //   components: {
@@ -132,6 +139,7 @@ export default {}
   width: 1200px;
   margin: 0 auto;
   overflow: hidden;
+  background: url(../static/wenzhen.png);
 }
 
 </style>
